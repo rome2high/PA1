@@ -19,9 +19,10 @@ public class Manager {
 	MatrixInt mxB;
 	MatrixInt mxC;
 
-	MappedByteBuffer io1, io2, io3;
+	MappedByteBuffer io1, io1_2, io2, io3;
 	
 	RandomAccessFile matrixA_mmFile;
+	RandomAccessFile matrixA_2_mmFile;
 	RandomAccessFile matrixB_mmFile;
 	RandomAccessFile matrixC_mmFile;
 	
@@ -36,6 +37,9 @@ public class Manager {
 		try {
 		matrixA_mmFile = new RandomAccessFile("matrixA.io", "rw");
 		io1 = matrixA_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
+		
+		matrixA_2_mmFile = new RandomAccessFile("matrixA_2.io", "rw");
+		io1_2 = matrixA_2_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
 		
 		matrixB_mmFile = new RandomAccessFile("matrixB.io", "rw");
 		io2 = matrixB_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
@@ -52,15 +56,18 @@ public class Manager {
 		
 		for(int i=0;i<a.size();i++) {
 			int[] v = new Vector(a.get(i)).getVector();
+			
 			for(int j=0;j<v.length;j++) {
 				System.out.println(v[j]);
-				io1.putInt(j*4, v[j]);
+				io1.putInt(i*4, v[i]);
+				io1_2.putInt(j*4, v[j]);
 			}
 		}
 		
 		for(int i=0;i<b.size();i++) {
 			int[] v = new Vector(b.get(i)).getVector();
 			for(int j=0;j<v.length;j++) {
+				System.out.println(v[j]);
 				io2.putInt(j*4, v[j]);
 			}
 		}

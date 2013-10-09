@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Vector;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,6 +25,23 @@ public class FileHandler extends JPanel {
 		chooser.setDialogTitle("Example");
 		chooser.showOpenDialog(this);
 		file = chooser.getSelectedFile();
+	}
+	
+	public void read() {
+		if (file == null)  {
+			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
+			return;
+		}
+		try {
+			Scanner input = new Scanner(file);
+			while(input.hasNext()) {
+				String line = input.nextLine();
+				lines.add(line);
+			}
+
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
+		}
 	}
 
 	public void read(Matrix _Matrix) {
