@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Vector;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -17,8 +15,6 @@ public class FileHandler extends JPanel {
 
 	private File file;
 	private ArrayList<String> lines = new ArrayList<String>();
-	//private ArrayList<String> MatrixA = new ArrayList<String>();
-	//private ArrayList<String> MatrixB = new ArrayList<String>();
 	JFileChooser chooser = new JFileChooser();
 
 
@@ -31,7 +27,7 @@ public class FileHandler extends JPanel {
 
 	public void read(Matrix _Matrix) {
 		if (file == null)  {
-			JOptionPane.showMessageDialog(this, "Eggs are not supposed to be green.");
+			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
 			return;
 		}
 		try {
@@ -43,11 +39,17 @@ public class FileHandler extends JPanel {
 			_Matrix.setAlist(lines);
 
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Eggs are not supposed to be green.");
+			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
 		}
 	}
 
 	public void dump() {
+		for (int i=0;i<lines.size();i++)
+			System.out.println(lines.get(i));
+	}
+	
+	public void dump(MatrixInt _Matrix) {
+		lines = _Matrix.getAlist();
 		for (int i=0;i<lines.size();i++)
 			System.out.println(lines.get(i));
 	}

@@ -10,18 +10,17 @@ import javax.swing.JFrame;
 //ICS-462
 //
 
-
 public class Parent extends JFrame implements ActionListener {
 
 	private static JButton button0 = new JButton("Load Matrix A");
-	private static JButton button1 = new JButton("Read");
-	private static JButton button2 = new JButton("Dump");
-	private static JButton button3 = new JButton("Parse");
+	private static JButton button1 = new JButton("Dump Matrix A");
+	private static JButton button2 = new JButton("Load Matrix B");
+	private static JButton button3 = new JButton("Dump Matrix B");
 	private static JButton button4 = new JButton("Execute");
 	private static JButton button5 = new JButton("Exit");
 
 	Vector vector1, vector2;
-	Matrix MatrixA, MatrixB, MatrixC;
+	MatrixInt MatrixA, MatrixB, MatrixC;
 
 	FileHandler fileHandler = new FileHandler();
 
@@ -58,28 +57,33 @@ public class Parent extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getActionCommand().equals("Load Matrix A")) {
-			Matrix MatrixA = new Matrix();
+			MatrixA = new MatrixInt();
 			fileHandler = new FileHandler();
 			fileHandler.select();
 			fileHandler.read(MatrixA);
-		} else if (arg0.getActionCommand().equals("Read")) {
+		} else if (arg0.getActionCommand().equals("Load Matrix B")) {
+			MatrixB = new MatrixInt();
 			fileHandler = new FileHandler();
 			fileHandler.select();
 			fileHandler.read(MatrixB);
 		}
-		else if (arg0.getActionCommand().equals("Dump")) { 
-			fileHandler.dump();
+		else if (arg0.getActionCommand().equals("Dump Matrix A")) { 
+			fileHandler.dump(MatrixA);
+		}
+		else if (arg0.getActionCommand().equals("Dump Matrix B")) { 
+			fileHandler.dump(MatrixB);
 		}
 		else if (arg0.getActionCommand().equals("Parse")) { 
 			ArrayList<String>lines = fileHandler.getLines();
 			vector1 = new Vector (lines.get(0));
 			vector2 = new Vector (lines.get(1));
+			vector1.addVector(vector2);
 			System.out.println(vector1);
 			System.out.println(vector2);	
 
 		}
 		else if (arg0.getActionCommand().equals("Execute")) { 
-			Manager m = new Manager(vector1, vector2);
+			Manager m = new Manager(MatrixA, MatrixB, MatrixC);
 			m.store();
 			m.execute();
 			

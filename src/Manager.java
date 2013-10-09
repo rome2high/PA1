@@ -6,57 +6,72 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
 public class Manager {
 
 	Process[] proc = new Process[1];
-	Vector vector1;
-	Vector vector2;
+	
+	MatrixInt mxA;
+	MatrixInt mxB;
+	MatrixInt mxC;
 
 	MappedByteBuffer io1, io2, io3;
-
-	RandomAccessFile vector1MemoryMappedFile;
-	RandomAccessFile vector2MemoryMappedFile;
-	RandomAccessFile resultMemoryMappedFile;
-
-	public Manager(Vector _vector1, Vector _vector2) {
-		vector1 = _vector1;
-		vector2 = _vector2;
+	
+	RandomAccessFile matrixA_mmFile;
+	RandomAccessFile matrixB_mmFile;
+	RandomAccessFile matrixC_mmFile;
+	
+	public Manager(MatrixInt _mxA, MatrixInt _mxB, MatrixInt _mxC){
+		mxA = _mxA;
+		mxB = _mxB;
+		mxC = _mxC;
 	}
-
 
 	public void store()  {
 
 		try {
-		vector1MemoryMappedFile = new RandomAccessFile("vector1.io", "rw");
-		io1 = vector1MemoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
+		matrixA_mmFile = new RandomAccessFile("matrixA.io", "rw");
+		io1 = matrixA_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
 		
-		vector2MemoryMappedFile = new RandomAccessFile("vector2.io", "rw");
-		io2 = vector2MemoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
+		matrixB_mmFile = new RandomAccessFile("matrixB.io", "rw");
+		io2 = matrixB_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
 		
-		resultMemoryMappedFile = new RandomAccessFile("vector3.io", "rw");
-		io3 = resultMemoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
+		matrixC_mmFile = new RandomAccessFile("matrixC.io", "rw");
+		io3 = matrixC_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 3*4);
 		}
 		catch (Exception e) {
 			System.out.println("error");
 		}
 
-		long val = 0;
-
-		int[] v = vector1.getVector();
-		for(int i=0;i<v.length;i++) {
-			io1.putInt(i*4, v[i]);
+		ArrayList<String> a = mxA.getAlist();
+		ArrayList<String> b = mxB.getAlist();
+		
+		for(int i=0;i<a.size();i++) {
+			int[] v = new Vector(a.get(i)).getVector();
+			for(int j=0;j<v.length;j++) {
+				System.out.println(v[j]);
+				io1.putInt(j*4, v[j]);
+			}
 		}
-
-		v = vector2.getVector();
-		for(int i=0;i<v.length;i++) {
-			io2.putInt(i*4, v[i]);
+		
+		for(int i=0;i<b.size();i++) {
+			int[] v = new Vector(b.get(i)).getVector();
+			for(int j=0;j<v.length;j++) {
+				io2.putInt(j*4, v[j]);
+			}
 		}
-
-		for(int i=0;i<v.length;i++) {
-			io3.putInt(i*4, 0);
+		
+		for(int i=0;i<b.size();i++) {
+			int[] v = new Vector(b.get(i)).getVector();
+			for(int j=0;j<v.length;j++) {
+				io3.putInt(j*4, 0);
+			}
 		}
+		
 		io1.force();
 		io2.force();
 		io3.force();
@@ -69,7 +84,7 @@ public class Manager {
 		// my vectors are all 3 in length
 		
 		try {
-			String[] exec = {"java", "-cp", "..\\PA1Demo\\bin\\", "Worker1", "3"};  //java Worker 3 
+			String[] exec = {"java", "-cp", "bin\\", "Worker", "3"};  //java Worker 3 
 			proc[0] = Runtime.getRuntime().exec(exec);
 			proc[0].waitFor();
 
@@ -83,7 +98,7 @@ public class Manager {
 			System.out.println("worker error:"+exitCode);
 		}
 
-		System.out.println("our result vector is:");
+		System.out.println("Matrix result vector is:");
 
 		for (int i=0;i<3;i++) {
 			int val = io3.getInt(i*4);
