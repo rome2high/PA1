@@ -81,7 +81,7 @@ public class Manager {
 		// my vectors are all 3 in length
 		
 		try {
-			String[] exec = {"java", "-cp", "bin\\", "Worker", "12"};  //java Worker 3 
+			String[] exec = {"java", "-cp", ".", "Worker", "12"};  //java Worker 3 
 			proc[0] = Runtime.getRuntime().exec(exec);
 			proc[0].waitFor();
 

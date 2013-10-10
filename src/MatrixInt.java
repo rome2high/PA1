@@ -45,11 +45,11 @@ public class MatrixInt implements Matrix{
 		int rows = _lists.size();
 		int cols = 0;
 
-		if ((rows <= 0))
-		{
-			JOptionPane.showMessageDialog(null, "NO Matrix Data File");
-			throw new InvalidParameterException("NO Matrix Data File");
-		}
+//		if ((rows < 0))
+//		{
+//			JOptionPane.showMessageDialog(null, "NO Matrix Data File");
+//			throw new InvalidParameterException("NO Matrix Data File");
+//		}
 		
 		m_rows = rows;
 
