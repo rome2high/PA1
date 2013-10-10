@@ -4,6 +4,8 @@
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
@@ -20,14 +22,14 @@ public class FileHandler extends JPanel {
 
 	public void select() {
 		chooser.setCurrentDirectory(new java.io.File("."));
-		chooser.setDialogTitle("Example");
+		chooser.setDialogTitle("Select a Matrix File");
 		chooser.showOpenDialog(this);
 		file = chooser.getSelectedFile();
 	}
 	
 	public void read() {
 		if (file == null)  {
-			JOptionPane.showMessageDialog(this, "Unvalid file.");
+			JOptionPane.showMessageDialog(this, "Unvalid file");
 			return;
 		}
 		try {
@@ -44,24 +46,6 @@ public class FileHandler extends JPanel {
 		}
 	}
 
-	public void read(Matrix _Matrix) {
-		if (file == null)  {
-			JOptionPane.showMessageDialog(this, "Unvalid file");
-			return;
-		}
-		try {
-			Scanner input = new Scanner(file);
-			while(input.hasNext()) {
-				String line = input.nextLine();
-				lines.add(line);
-			}
-			_Matrix.setAlist(lines);
-
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
-		}
-	}
-
 	public void dump() {
 		for (int i=0;i<lines.size();i++)
 			System.out.println(lines.get(i));
@@ -71,12 +55,34 @@ public class FileHandler extends JPanel {
 		return lines;
 	}
 	
+	public void setLines(ArrayList<String> lines) {
+		this.lines = lines;
+	}
+	
 	public File getFile() {
 		return file;
 	}
 
 	public void setFile(File file) {
 		this.file = file;
+	}
+	
+	public void write() {
+		if (file == null)  {
+			JOptionPane.showMessageDialog(this, "Unvalid file");
+			return;
+		}
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(file, "UTF-8");
+			for(String s : lines){
+				writer.println(s);
+			}
+		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			writer.close();
+		}
 	}
 	
 }

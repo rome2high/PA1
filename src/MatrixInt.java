@@ -6,7 +6,6 @@ import javax.swing.JOptionPane;
 public class MatrixInt implements Matrix{
 	
 	private int m_rows, m_cols;
-	private ArrayList<String> alist = new ArrayList<String>();
 	private Vector[] m_matrix;
 	
 	public static MatrixInt InitMatrix(ArrayList<String> _lists)
@@ -15,8 +14,8 @@ public class MatrixInt implements Matrix{
 	}
 	
 	public MatrixInt(int rows, int cols) {
-		// TODO Auto-generated constructor stub
-		if ((m_rows <= 0) || (m_cols <= 0))
+		
+		if ((rows <= 0) || (cols <= 0))
 		{
 			throw new InvalidParameterException("Invalid amount of rows or columns.");
 		}
@@ -25,28 +24,34 @@ public class MatrixInt implements Matrix{
 		m_cols = cols;
 
 		m_matrix = new Vector[m_rows];
+		
 		for (int i = 0; i < m_rows; i++)
 		{
 			m_matrix[i] = new Vector(m_cols);
-			JOptionPane.showMessageDialog(null, "this is " + m_matrix[i]);
 		}
 		
+	}
+	
+	public ArrayList<String> ToArrayList(){
+		ArrayList<String> arrS = new ArrayList<String>();
+		for(Vector v : m_matrix){
+			arrS.add(v.line);
+		}
+		return arrS;
 	}
 	
 	public MatrixInt(ArrayList<String> _lists)
 	{
 		int rows = _lists.size();
 		int cols = 0;
-		
-//		if ((rows <= 0) || (columns <= 0))
+
 		if ((rows <= 0))
 		{
-			JOptionPane.showMessageDialog(null, "Unvalid Data");
-			throw new InvalidParameterException("NO matrix data.");
+			JOptionPane.showMessageDialog(null, "NO Matrix Data File");
+			throw new InvalidParameterException("NO Matrix Data File");
 		}
 		
 		m_rows = rows;
-		//m_cols = columns;
 
 		m_matrix = new Vector[m_rows];
 		cols =  new Vector(_lists.get(0)).vector.length;	//first row col numb
@@ -54,7 +59,7 @@ public class MatrixInt implements Matrix{
 		for (int i = 0; i < m_rows; i++)
 		{
 			m_matrix[i] = new Vector(_lists.get(i));
-			alist.add(_lists.get(i));						//redundant
+			//alist.add(_lists.get(i));						//redundant
 			if(m_matrix[i].vector.length != cols){
 				throw new InvalidParameterException("Invalid columns size.");
 			}
@@ -78,15 +83,6 @@ public class MatrixInt implements Matrix{
 	public int columns() {
 		// TODO Auto-generated method stub
 		return m_cols;
-	}
-
-	public ArrayList<String> getAlist() {
-		return alist;
-	}
-
-	@Override
-	public void setAlist(ArrayList<String> alist) {
-		this.alist = alist;
 	}
 
 	public Vector[] getM_matrix() {
@@ -122,22 +118,14 @@ public class MatrixInt implements Matrix{
 
 	@Override
 	public MatrixInt multiply(MatrixInt right) throws InvalidParameterException {
-		// TODO Auto-generated method stub
-		
-		//JOptionPane.showMessageDialog(null, right);
-		
 		MatrixInt MatrixB = right;
 
-//		if (m_cols != MatrixB.m_rows)
-//		{
-//			throw new InvalidParameterException("The quantity of columns in "
-//					+ "multiplicand must be equal to the quantity of rows "
-//					+ "int multiplier.");
-//		}
-
-		MatrixInt MatrixC = new MatrixInt(m_rows, right.m_cols);
+		if (m_cols != MatrixB.m_rows)
+		{
+			throw new InvalidParameterException("The columns in Matrix A must equal to rows in Matrix B.");
+		}
 		
-		JOptionPane.showMessageDialog(null, "This is MatrixC: \n"+MatrixC);
+		MatrixInt MatrixC = new MatrixInt(m_rows, MatrixB.m_cols);
 		
 		for (int i = 0; i < MatrixC.m_rows; i++)
 		{
@@ -151,13 +139,8 @@ public class MatrixInt implements Matrix{
 				}
 			}
 		}
-		
-		
-		JOptionPane.showMessageDialog(null, "This is MatrixC: \n"+MatrixC);
 
 		return MatrixC;
 	}
-
-
 
 }

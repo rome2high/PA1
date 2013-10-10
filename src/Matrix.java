@@ -1,6 +1,4 @@
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-
 
 public interface Matrix {
 	
@@ -9,8 +7,6 @@ public interface Matrix {
 	public int rows();
 	
 	public int columns();
-	
-	public void setAlist(ArrayList<String> alist);
 	
 	public boolean isNull();
 

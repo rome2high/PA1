@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+
 //Michael Dorin
 //ICS-462
 //
@@ -21,9 +21,11 @@ public class Vector {
         }
 
 		public Vector(int m_cols) {
+			int[] v = new int[m_cols];
 			for(int i = 0; i<m_cols; i++){
-				vector[i]= 0;
+				v[i] = 0;
 			}
+			vector = v;
 		}
 
 		public int[] getVector() {
@@ -58,7 +60,6 @@ public class Vector {
 			retVal = new Vector(v3);
 			return retVal;
 		}
-
 
 		public String toString() {
             String retVal = "The vector is:";

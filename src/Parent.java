@@ -3,16 +3,13 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
+import java.io.IOException;
+import javax.swing.*;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
+
 //Michael Dorin
 //ICS-462
 //
-import javax.swing.JOptionPane;
-
 
 public class Parent extends JFrame implements ActionListener {
 
@@ -22,24 +19,32 @@ public class Parent extends JFrame implements ActionListener {
 	private static JButton button3 = new JButton("Dump Matrix B");
 	private static JButton button4 = new JButton("Execute");
 	private static JButton button5 = new JButton("Exit");
+	private JTextField txtInput = new JTextField();
 
-	Vector vector1, vector2;
 	MatrixInt MatrixA, MatrixB, MatrixC;
 
 	FileHandler fileHandler = new FileHandler();
 
 	public void myMain() {
+		
+		JLabel labelName = new JLabel("Enter a output result file name below: ");
+		JPanel panel = new JPanel();
+		panel.add(labelName, "push, align center");		
+		
 		setTitle("ICS-462 PA1 Processes with JAVA");
 		setLayout(new GridLayout(0,1));
 		setSize(400,400);
 		setLocationRelativeTo(null);
+		
 		add(button0);
 		add(button1);
 		add(button2);
 		add(button3);
+		add(panel);
+		add(txtInput);
 		add(button4);
 		add(button5);
-
+		
 		button0.addActionListener(this);
 		button1.addActionListener(this);
 		button2.addActionListener(this);
@@ -61,10 +66,9 @@ public class Parent extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getActionCommand().equals("Load Matrix A")) {
 			
-			//need to know rows and cols
 			fileHandler = new FileHandler();
 			fileHandler.select();
-			if(fileHandler.getFile() == null){	//cancel button
+			if(fileHandler.getFile() == null){	// handle cancel button
 				return;
 			}
 			fileHandler.read();
@@ -87,26 +91,36 @@ public class Parent extends JFrame implements ActionListener {
 			System.out.println(MatrixB);
 		}
 		
-		else if (arg0.getActionCommand().equals("Parse")) { 
-			ArrayList<String>lines = fileHandler.getLines();
-			vector1 = new Vector (lines.get(0));
-			vector2 = new Vector (lines.get(1));
-			vector1.addVector(vector2);
-			System.out.println(vector1);
-			System.out.println(vector2);	
-
-		}
 		else if (arg0.getActionCommand().equals("Execute")) { 
-			//matrix matching
+			if(this.txtInput.getText() == null || this.txtInput.getText().isEmpty()){
+				JOptionPane.showMessageDialog(this, "Please enter output file name!");
+				return;
+			}else if(MatrixA == null || MatrixB == null){
+				JOptionPane.showMessageDialog(this, "Please load Matrix A and Matrix B");
+				return;
+			}
 			if(MatrixA != null && MatrixB != null){
 				if(MatrixA.columns() == MatrixB.rows()){
 					Manager m = new Manager(MatrixA, MatrixB, MatrixC);
-					m.store();
+					try {
+						m.store();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					m.execute();
+					
+					File fi = new File(this.txtInput.getText());
+					fileHandler = new FileHandler();
+					fileHandler.setFile(fi);
+					fileHandler.setLines(m.MatrixC.ToArrayList());
+					fileHandler.write();
 					return;
 				}
 			}
-			JOptionPane.showMessageDialog(this, "Matrices are not match!");
+			JOptionPane.showMessageDialog(this, "The columns in Matrix A must equal to rows in Matrix B.\n" 
+					+ "Matrix A Columns: " + MatrixA.columns()
+					+ "\nMatrix B Rows: " + MatrixB.rows()
+					);
 			
 		} else if (arg0.getActionCommand().equals("Exit")) {
 			System.exit(0);

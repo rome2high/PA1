@@ -1,15 +1,9 @@
 // MemoryMappedFile Demo 
-// Michael Dorin
-// ICS-462
-// 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 
 public class Manager {
 
@@ -31,7 +25,7 @@ public class Manager {
 		MatrixC = _MatrixC;
 	}
 
-	public void store()  {
+	public void store() throws IOException  {
 
 		try {
 		MatrixA_mmFile = new RandomAccessFile("MatrixA.io", "rw");
@@ -47,18 +41,13 @@ public class Manager {
 			System.out.println("error");
 		}
 		
-		System.out.println("Store Matrices");
-
-		//ArrayList<String> a = MatrixA.getAlist();
-		//ArrayList<String> b = MatrixB.getAlist();
-		
 		Vector[] vec = MatrixA.getM_matrix();
 		int index = 0;
 		
 		for(int i = 0; i< vec.length; i++){
 			Vector v = vec[i];
 			for(int j= 0; j < v.vector.length; j++){
-				System.out.println(index + "-" +v.vector[j]);
+				System.out.println(index + " - " +v.vector[j]);
 				io1.putInt(index , v.vector[j]);
 				index += 4;
 			}
@@ -71,7 +60,7 @@ public class Manager {
 		for(int i = 0; i< vec.length; i++){
 			Vector v = vec[i];
 			for(int j= 0; j < v.vector.length; j++){
-				System.out.println(index + "-" +v.vector[j]);
+				System.out.println(index + " - " +v.vector[j]);
 				io2.putInt(index , v.vector[j]);
 				index += 4;
 			}
@@ -79,36 +68,12 @@ public class Manager {
 			index += 4;
 		}
 		
-//		for(int i=0;i<a.size();i++) {
-//			int[] v = new Vector(a.get(i)).getVector();
-//			
-//			for(int j=0;j<v.length;j++) {
-//				System.out.println(v[j]);
-//				io1.putInt(i*4, v[i]);
-//				io1_2.putInt(j*4, v[j]);
-//			}
-//		}
-		
-//		for(int i=0;i<b.size();i++) {
-//			int[] v = new Vector(b.get(i)).getVector();
-//			for(int j=0;j<v.length;j++) {
-//				System.out.println(v[j]);
-//				io2.putInt(j*4, v[j]);
-//			}
-//		}
-//		
-//		for(int i=0;i<b.size();i++) {
-//			int[] v = new Vector(b.get(i)).getVector();
-//			for(int j=0;j<v.length;j++) {
-//				io3.putInt(j*4, 0);
-//			}
-//		}
-		
 		io1.force();
 		io2.force();
 		io3.force();
-		;
-		
+		MatrixA_mmFile.close();
+		MatrixB_mmFile.close();
+		MatrixC_mmFile.close();
 	}
 
 	public void execute() {
@@ -131,13 +96,28 @@ public class Manager {
 		}
 
 		System.out.println("MatrixC result is:");
-
-		for (int i=0;i<3;i++) {
-			int val = io3.getInt(i*4);
-			//System.out.println(i+" "+val);
-		}
 		
-		System.out.println("End.........!");
+		int[] v1_a = new int[12];
+		   
+        ArrayList<String> alist = new ArrayList<String>();
+        String s = "";
+        int index = 0;
+        
+        //handle MatrixC
+        for(int i = 0; i<12; i++){
+        	index = i*4;
+        	v1_a[i] = io3.getInt(index);
+        	s += v1_a[i] + " ";
+        	if(v1_a[i] == -99999){
+        		s = s.substring(0, s.indexOf("-99999"));
+        		s = s.trim();
+        		alist.add(s);
+        		s= "";
+        	}
+        }
+        
+        MatrixC = new MatrixInt(alist);
+        System.out.println(MatrixC.toString());
 		
  	}
 
