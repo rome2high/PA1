@@ -1,15 +1,21 @@
 
+//**********************************************************
+// Assignment: ICS-462-50 PA1 Processes with JAVA
+//
+// Author: Romeo Mai
+//
+// Completion time: 36 hours
+//
+// Honor Code: I pledge that this program represents my own
+//   program code with the inspiration from Michael Dorin's works in designing and debugging my program.
+//*********************************************************
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
-
-
-//Michael Dorin
-//ICS-462
-//
 
 public class Parent extends JFrame implements ActionListener {
 
@@ -103,11 +109,12 @@ public class Parent extends JFrame implements ActionListener {
 				if(MatrixA.columns() == MatrixB.rows()){
 					Manager m = new Manager(MatrixA, MatrixB, MatrixC);
 					try {
+						m.vectorSize = MatrixA.columns() * MatrixB.rows() + MatrixB.rows();
 						m.store();
+						m.execute();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					m.execute();
 					
 					File fi = new File(this.txtInput.getText());
 					fileHandler = new FileHandler();

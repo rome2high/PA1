@@ -1,6 +1,14 @@
-// Michael Dorin
-// ICS-462
+
+//**********************************************************
+// Assignment: ICS-462-50 PA1 Processes with JAVA
 //
+// Author: Romeo Mai
+//
+// Completion time: 36 hours
+//
+// Honor Code: I pledge that this program represents my own
+//   program code with the inspiration from Michael Dorin's works in designing and debugging my program.
+//*********************************************************
 
 import java.io.File;
 import java.io.FileNotFoundException;

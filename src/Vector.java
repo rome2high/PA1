@@ -1,7 +1,14 @@
 
-//Michael Dorin
-//ICS-462
+//**********************************************************
+// Assignment: ICS-462-50 PA1 Processes with JAVA
 //
+// Author: Romeo Mai
+//
+// Completion time: 36 hours
+//
+// Honor Code: I pledge that this program represents my own
+//   program code with the inspiration from Michael Dorin's works in designing and debugging my program.
+//*********************************************************
 
 public class Vector {
         String line;
@@ -66,7 +73,7 @@ public class Vector {
             for (int i=0;i<vector.length;i++)
                     retVal+=vector[i]+",";
             return retVal;
-    }
+        }
 
 		public void set(int i, int value) {
 			vector[i] = value;

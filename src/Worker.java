@@ -1,16 +1,21 @@
- 
-// Michael Dorin
-// ICS-462
+
+//**********************************************************
+// Assignment: ICS-462-50 PA1 Processes with JAVA
 //
+// Author: Romeo Mai
+//
+// Completion time: 36 hours
+//
+// Honor Code: I pledge that this program represents my own
+//   program code with the inspiration from Michael Dorin's works in designing and debugging my program.
+//*********************************************************
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
-
 
 public class Worker {
 
@@ -21,7 +26,6 @@ public class Worker {
     MappedByteBuffer io1, io2, io3;
     
     MatrixInt MatrixA, MatrixB, MatrixC;
-
 
         public void myMain(String _size) throws Exception {
                 int vectorSize = 0;
@@ -47,18 +51,18 @@ public class Worker {
                 	throw new IOException("RandomAccessFile Faild in Worker");
                 }
                 
-                int[] v1_a = new int[vectorSize];
+                int[] arrInt = new int[vectorSize];
    
                 ArrayList<String> alist = new ArrayList<String>();
                 String s = "";
                 int index = 0;
                 
-                //handle MatrixA
+              //read MatrixA RandomAccessFile
                 for(int i = 0; i<vectorSize; i++){
                 	index = i*4;
-                	v1_a[i] = io1.getInt(index);
-                	s += v1_a[i] + " ";
-                	if(v1_a[i] == -99999){
+                	arrInt[i] = io1.getInt(index);
+                	s += arrInt[i] + " ";
+                	if(arrInt[i] == -99999){
                 		s = s.substring(0, s.indexOf("-99999"));
                 		s.trim();
                 		alist.add(s);
@@ -68,15 +72,16 @@ public class Worker {
                 MatrixA = new MatrixInt(alist);
                 //print("This is MatrixA: \n" + MatrixA.toString());
                 
-                //handle MatrixB
+              //read MatrixB RandomAccessFile
+                arrInt = new int[vectorSize];
                 alist = new ArrayList<String>();
                 s = "";
                 index = 0;
                 for(int i = 0; i<vectorSize; i++){
                 	index = i*4;
-                	v1_a[i] = io2.getInt(index);
-                	s += v1_a[i] + " ";
-                	if(v1_a[i] == -99999){
+                	arrInt[i] = io2.getInt(index);
+                	s += arrInt[i] + " ";
+                	if(arrInt[i] == -99999){
                 		s = s.substring(0, s.indexOf("-99999"));
                 		s.trim();
                 		alist.add(s);
@@ -87,10 +92,9 @@ public class Worker {
                 //print("This is MatrixB: \n" + MatrixB.toString());
                 
                 MatrixC = MatrixA.multiply(MatrixB);
-                
                 //print("this MatrixC: \n" + MatrixC.toString());
                 
-                //write MatrixC to io3
+                //write MatrixC RandomAccessFile
                 Vector[] vec = MatrixC.getM_matrix();
         		index = 0;
         		
@@ -112,8 +116,8 @@ public class Worker {
                 MatrixB_mmFile.close();
                 MatrixC_mmFile.close();
                 System.exit(0);
-
         }
+        
         public static void main(String args[]) {
                 Worker worker = new Worker();
 
@@ -132,6 +136,7 @@ public class Worker {
                 }
         }
         
+        //debug use only
         public void print(String s){
         	 JOptionPane.showMessageDialog(null, s);
         }

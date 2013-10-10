@@ -1,7 +1,17 @@
+
+//**********************************************************
+// Assignment: ICS-462-50 PA1 Processes with JAVA
+//
+// Author: Romeo Mai
+//
+// Completion time: 36 hours
+//
+// Honor Code: I pledge that this program represents my own
+//   program code with the inspiration from Michael Dorin's works in designing and debugging my program.
+//*********************************************************
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
 
 public class MatrixInt implements Matrix{
 	
@@ -45,11 +55,11 @@ public class MatrixInt implements Matrix{
 		int rows = _lists.size();
 		int cols = 0;
 
-//		if ((rows < 0))
-//		{
-//			JOptionPane.showMessageDialog(null, "NO Matrix Data File");
-//			throw new InvalidParameterException("NO Matrix Data File");
-//		}
+		if ((rows < 0))
+		{
+			//JOptionPane.showMessageDialog(null, "NO Matrix Data Row");
+			throw new InvalidParameterException("NO Matrix Data Row");
+		}
 		
 		m_rows = rows;
 
@@ -67,11 +77,11 @@ public class MatrixInt implements Matrix{
 
 	}
 	
-	@Override
-	public Matrix multiply(Matrix right) throws InvalidParameterException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public Matrix multiply(Matrix right) throws InvalidParameterException {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	
 	@Override
 	public int rows() {
