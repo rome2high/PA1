@@ -20,6 +20,12 @@ public class Vector {
         	vector = _vector;
         }
 
+		public Vector(int m_cols) {
+			for(int i = 0; i<m_cols; i++){
+				vector[i]= 0;
+			}
+		}
+
 		public int[] getVector() {
 			return vector;
 		}
@@ -60,5 +66,9 @@ public class Vector {
                     retVal+=vector[i]+",";
             return retVal;
     }
+
+		public void set(int i, int value) {
+			vector[i] = value;
+		}
 
 }

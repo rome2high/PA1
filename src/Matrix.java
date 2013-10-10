@@ -11,5 +11,9 @@ public interface Matrix {
 	public int columns();
 	
 	public void setAlist(ArrayList<String> alist);
+	
+	public boolean isNull();
+
+	public MatrixInt multiply(MatrixInt right) throws InvalidParameterException;
 
 }

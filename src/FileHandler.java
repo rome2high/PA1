@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Vector;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,24 +27,26 @@ public class FileHandler extends JPanel {
 	
 	public void read() {
 		if (file == null)  {
-			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
+			JOptionPane.showMessageDialog(this, "Unvalid file.");
 			return;
 		}
 		try {
 			Scanner input = new Scanner(file);
 			while(input.hasNext()) {
-				String line = input.nextLine();
-				lines.add(line);
+				String line = input.nextLine().trim();
+				if(!line.isEmpty() && line != null){
+					lines.add(line);
+				}
 			}
 
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
+			JOptionPane.showMessageDialog(this, "Fail to read matrix file!.");
 		}
 	}
 
 	public void read(Matrix _Matrix) {
 		if (file == null)  {
-			JOptionPane.showMessageDialog(this, "Unvalid Matrix");
+			JOptionPane.showMessageDialog(this, "Unvalid file");
 			return;
 		}
 		try {
@@ -66,15 +66,17 @@ public class FileHandler extends JPanel {
 		for (int i=0;i<lines.size();i++)
 			System.out.println(lines.get(i));
 	}
-	
-	public void dump(MatrixInt _Matrix) {
-		lines = _Matrix.getAlist();
-		for (int i=0;i<lines.size();i++)
-			System.out.println(lines.get(i));
-	}
 
 	public ArrayList<String> getLines() {
 		return lines;
 	}
+	
+	public File getFile() {
+		return file;
+	}
 
+	public void setFile(File file) {
+		this.file = file;
+	}
+	
 }

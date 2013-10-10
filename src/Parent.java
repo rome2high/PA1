@@ -2,6 +2,8 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -9,6 +11,7 @@ import javax.swing.JFrame;
 //Michael Dorin
 //ICS-462
 //
+import javax.swing.JOptionPane;
 
 
 public class Parent extends JFrame implements ActionListener {
@@ -54,26 +57,36 @@ public class Parent extends JFrame implements ActionListener {
 		parent.myMain();
 	}
 
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getActionCommand().equals("Load Matrix A")) {
-			MatrixA = new MatrixInt();
+			
+			//need to know rows and cols
 			fileHandler = new FileHandler();
 			fileHandler.select();
-			fileHandler.read(MatrixA);
+			if(fileHandler.getFile() == null){	//cancel button
+				return;
+			}
+			fileHandler.read();
+			MatrixA = new MatrixInt(fileHandler.getLines());
+		}else if (arg0.getActionCommand().equals("Dump Matrix A")) {
+			System.out.println("The Matrix A is:");
+			System.out.println(MatrixA);
+			
 		} else if (arg0.getActionCommand().equals("Load Matrix B")) {
-			MatrixB = new MatrixInt();
 			fileHandler = new FileHandler();
 			fileHandler.select();
-			fileHandler.read(MatrixB);
-		}
-		else if (arg0.getActionCommand().equals("Dump Matrix A")) { 
-			fileHandler.dump(MatrixA);
+			if(fileHandler.getFile() == null){
+				return;
+			}
+			fileHandler.read();
+			MatrixB = new MatrixInt(fileHandler.getLines());
 		}
 		else if (arg0.getActionCommand().equals("Dump Matrix B")) { 
-			fileHandler.dump(MatrixB);
+			System.out.println("The Matrix B is:");
+			System.out.println(MatrixB);
 		}
+		
 		else if (arg0.getActionCommand().equals("Parse")) { 
 			ArrayList<String>lines = fileHandler.getLines();
 			vector1 = new Vector (lines.get(0));
@@ -84,9 +97,16 @@ public class Parent extends JFrame implements ActionListener {
 
 		}
 		else if (arg0.getActionCommand().equals("Execute")) { 
-			Manager m = new Manager(MatrixA, MatrixB, MatrixC);
-			m.store();
-			m.execute();
+			//matrix matching
+			if(MatrixA != null && MatrixB != null){
+				if(MatrixA.columns() == MatrixB.rows()){
+					Manager m = new Manager(MatrixA, MatrixB, MatrixC);
+					m.store();
+					m.execute();
+					return;
+				}
+			}
+			JOptionPane.showMessageDialog(this, "Matrices are not match!");
 			
 		} else if (arg0.getActionCommand().equals("Exit")) {
 			System.exit(0);
