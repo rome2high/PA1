@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class Worker {
@@ -27,13 +26,17 @@ public class Worker {
     
     MatrixInt MatrixA, MatrixB, MatrixC;
 
-        public void myMain(String s1, String s2) throws Exception {
-                int vectorSizeA = 0;
-                int vectorSizeB = 0;
+        public void myMain(String mArows, String mAcols, String mBrows, String mBcols) throws Exception {
+                int Arows = 0;
+                int Acols = 0;
+                int Brows = 0;
+                int Bcols = 0;
                 
                 try {
-                	vectorSizeA = Integer.parseInt(s1);
-                	vectorSizeB = Integer.parseInt(s2);
+                	Arows = Integer.parseInt(mArows);
+                	Acols = Integer.parseInt(mAcols);
+                	Brows = Integer.parseInt(mBrows);
+                	Bcols = Integer.parseInt(mBcols);
                 }
                 catch (Exception e) {
                         System.exit(15);
@@ -53,79 +56,25 @@ public class Worker {
                 	throw new IOException("RandomAccessFile Faild in Worker");
                 }
                 
-                int[] arrInt = new int[vectorSizeA];
-   
-                ArrayList<String> alist = new ArrayList<String>();
-                String s = "";
-                int index = 0;
+                MatrixA = new MatrixInt(Arows, Acols);
+                MatrixA.getFromIO(io1);
+                //print(MatrixA.toString());
                 
-              //read MatrixA RandomAccessFile
-                for(int i = 0; i<vectorSizeA; i++){
-                	index = i*4;
-                	arrInt[i] = io1.getInt(index);
-                	s += arrInt[i] + " ";
-                	if(arrInt[i] == -9999){
-                		s = s.substring(0, s.indexOf("-9999"));
-                		s.trim();
-                		alist.add(s);
-                		s= "";
-                	}
-                }
-                MatrixA = new MatrixInt(alist);
-                //print("This is MatrixA: \n" + MatrixA.toString());
+                MatrixB = new MatrixInt(Brows, Bcols);
+                MatrixB.getFromIO(io2);
+                //print(MatrixB.toString());
                 
-              //read MatrixB RandomAccessFile
-                arrInt = new int[vectorSizeB];
-                alist = new ArrayList<String>();
-                s = "";
-                
-                byte[] b = new byte[50];
-             
-                index = 0;
-            	io2.get(b);
-            	
-            	s = new String(b);
-            	
-            	String[] as = s.split("#");
-            	
-            	MatrixB = new MatrixInt(vectorSizeB, new Vector(as[0]).vector.length);
-            	
-                for(int i = 0; i<vectorSizeB; i++){
-                	Vector v = new Vector(as[i]);
-                	for (int j = 0; j <v.vector.length; j++){
-                		MatrixB.set(i, j, v.vector[j]);
-                	}
-                }
-                
-                //MatrixB = new MatrixInt(alist);
-                //print("This is MatrixB: \n" + MatrixB.toString());
-                
-                
+                MatrixC = new MatrixInt(Arows, Bcols);
                 MatrixC = MatrixA.multiply(MatrixB);
+                MatrixC.putToIO(io3);
                 //print("this MatrixC: \n" + MatrixC.toString());
-                
-                
-                //write MatrixC RandomAccessFile
-                Vector[] vec = MatrixC.getM_matrix();
-        		index = 0;
-        		
-        		for(int i = 0; i < vec.length; i++){
-        			Vector v = vec[i];
-        			for(int j= 0; j < v.vector.length; j++){
-        				io3.putInt(index , v.vector[j]);
-        				index += 4;
-        			}
-        			io3.putInt(index, -9999);
-        			index += 4;
-        		}
-                
+
                 io1.force();
                 io2.force();
                 io3.force();
                 MatrixA_mmFile.close();
                 MatrixB_mmFile.close();
                 MatrixC_mmFile.close();
-                
                 System.exit(0);
         }
         
@@ -136,12 +85,11 @@ public class Worker {
                         System.exit(12);
                 }
 
-                if (args.length != 2)
+                if (args.length != 4)
                         System.exit(9);
 
-
                 try {
-                        worker.myMain(args[0], args[1]);
+                    worker.myMain(args[0], args[1], args[2], args[3]);
                 } catch (Exception e) {
                          System.exit(2);
                 }

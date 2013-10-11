@@ -10,6 +10,7 @@
 //   program code with the inspiration from Michael Dorin's works in designing and debugging my program.
 //*********************************************************
 
+import java.nio.MappedByteBuffer;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
@@ -64,7 +65,6 @@ public class MatrixInt implements Matrix{
 		{
 			//JOptionPane.showMessageDialog(null, i);
 			m_matrix[i] = new Vector(_lists.get(i));
-			//alist.add(_lists.get(i));						//redundant
 			if(m_matrix[i].vector.length != cols){
 				JOptionPane.showMessageDialog(null, "MatrixB Error!");
 				throw new InvalidParameterException("Invalid columns size.");
@@ -72,12 +72,6 @@ public class MatrixInt implements Matrix{
 		}
 
 	}
-	
-//	@Override
-//	public Matrix multiply(Matrix right) throws InvalidParameterException {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 	
 	@Override
 	public int rows() {
@@ -122,6 +116,11 @@ public class MatrixInt implements Matrix{
 		m_matrix[i].set(j, v);
 	}
 
+	public int get(int i, int j)
+	{
+		return m_matrix[i].vector[j];
+	}
+
 	@Override
 	public MatrixInt multiply(MatrixInt right) throws InvalidParameterException {
 		MatrixInt MatrixB = right;
@@ -155,6 +154,26 @@ public class MatrixInt implements Matrix{
 			arrS.add(v.line);
 		}
 		return arrS;
+	}
+	
+	public void putToIO(MappedByteBuffer _io){
+		int index = 0;
+		for(int i=0;i<rows();i++) {
+			for(int j = 0; j< columns(); j++){
+				_io.putInt(index*4, get(i, j));
+				index++;
+			}
+		}
+	}
+	
+	public void getFromIO(MappedByteBuffer _io){
+		int index = 0;
+		for(int i = 0; i< rows(); i++){
+			for(int j = 0; j<columns();j++){
+				set(i, j, _io.getInt(index*4));
+				index++;
+			}
+		}
 	}
 
 }
