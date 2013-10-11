@@ -13,6 +13,8 @@
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 public class MatrixInt implements Matrix{
 	
 	private int m_rows, m_cols;
@@ -42,14 +44,6 @@ public class MatrixInt implements Matrix{
 		
 	}
 	
-	public ArrayList<String> ToArrayList(){
-		ArrayList<String> arrS = new ArrayList<String>();
-		for(Vector v : m_matrix){
-			arrS.add(v.line);
-		}
-		return arrS;
-	}
-	
 	public MatrixInt(ArrayList<String> _lists)
 	{
 		int rows = _lists.size();
@@ -68,9 +62,11 @@ public class MatrixInt implements Matrix{
 		m_cols = cols;
 		for (int i = 0; i < m_rows; i++)
 		{
+			//JOptionPane.showMessageDialog(null, i);
 			m_matrix[i] = new Vector(_lists.get(i));
 			//alist.add(_lists.get(i));						//redundant
 			if(m_matrix[i].vector.length != cols){
+				JOptionPane.showMessageDialog(null, "MatrixB Error!");
 				throw new InvalidParameterException("Invalid columns size.");
 			}
 		}
@@ -151,6 +147,14 @@ public class MatrixInt implements Matrix{
 		}
 
 		return MatrixC;
+	}
+	
+	public ArrayList<String> ToArrayList(){
+		ArrayList<String> arrS = new ArrayList<String>();
+		for(Vector v : m_matrix){
+			arrS.add(v.line);
+		}
+		return arrS;
 	}
 
 }

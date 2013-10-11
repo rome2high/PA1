@@ -27,11 +27,13 @@ public class Worker {
     
     MatrixInt MatrixA, MatrixB, MatrixC;
 
-        public void myMain(String _size) throws Exception {
-                int vectorSize = 0;
-
+        public void myMain(String s1, String s2) throws Exception {
+                int vectorSizeA = 0;
+                int vectorSizeB = 0;
+                
                 try {
-                        vectorSize = Integer.parseInt(_size);
+                	vectorSizeA = Integer.parseInt(s1);
+                	vectorSizeB = Integer.parseInt(s2);
                 }
                 catch (Exception e) {
                         System.exit(15);
@@ -51,19 +53,19 @@ public class Worker {
                 	throw new IOException("RandomAccessFile Faild in Worker");
                 }
                 
-                int[] arrInt = new int[vectorSize];
+                int[] arrInt = new int[vectorSizeA];
    
                 ArrayList<String> alist = new ArrayList<String>();
                 String s = "";
                 int index = 0;
                 
               //read MatrixA RandomAccessFile
-                for(int i = 0; i<vectorSize; i++){
+                for(int i = 0; i<vectorSizeA; i++){
                 	index = i*4;
                 	arrInt[i] = io1.getInt(index);
                 	s += arrInt[i] + " ";
-                	if(arrInt[i] == -99999){
-                		s = s.substring(0, s.indexOf("-99999"));
+                	if(arrInt[i] == -9999){
+                		s = s.substring(0, s.indexOf("-9999"));
                 		s.trim();
                 		alist.add(s);
                 		s= "";
@@ -73,26 +75,35 @@ public class Worker {
                 //print("This is MatrixA: \n" + MatrixA.toString());
                 
               //read MatrixB RandomAccessFile
-                arrInt = new int[vectorSize];
+                arrInt = new int[vectorSizeB];
                 alist = new ArrayList<String>();
                 s = "";
+                
+                byte[] b = new byte[50];
+             
                 index = 0;
-                for(int i = 0; i<vectorSize; i++){
-                	index = i*4;
-                	arrInt[i] = io2.getInt(index);
-                	s += arrInt[i] + " ";
-                	if(arrInt[i] == -99999){
-                		s = s.substring(0, s.indexOf("-99999"));
-                		s.trim();
-                		alist.add(s);
-                		s= "";
+            	io2.get(b);
+            	
+            	s = new String(b);
+            	
+            	String[] as = s.split("#");
+            	
+            	MatrixB = new MatrixInt(vectorSizeB, new Vector(as[0]).vector.length);
+            	
+                for(int i = 0; i<vectorSizeB; i++){
+                	Vector v = new Vector(as[i]);
+                	for (int j = 0; j <v.vector.length; j++){
+                		MatrixB.set(i, j, v.vector[j]);
                 	}
                 }
-                MatrixB = new MatrixInt(alist);
+                
+                //MatrixB = new MatrixInt(alist);
                 //print("This is MatrixB: \n" + MatrixB.toString());
+                
                 
                 MatrixC = MatrixA.multiply(MatrixB);
                 //print("this MatrixC: \n" + MatrixC.toString());
+                
                 
                 //write MatrixC RandomAccessFile
                 Vector[] vec = MatrixC.getM_matrix();
@@ -104,17 +115,17 @@ public class Worker {
         				io3.putInt(index , v.vector[j]);
         				index += 4;
         			}
-        			io3.putInt(index, -99999);
+        			io3.putInt(index, -9999);
         			index += 4;
         		}
                 
                 io1.force();
                 io2.force();
                 io3.force();
-                
                 MatrixA_mmFile.close();
                 MatrixB_mmFile.close();
                 MatrixC_mmFile.close();
+                
                 System.exit(0);
         }
         
@@ -125,12 +136,12 @@ public class Worker {
                         System.exit(12);
                 }
 
-                if (args.length != 1)
+                if (args.length != 2)
                         System.exit(9);
 
 
                 try {
-                        worker.myMain(args[0]);
+                        worker.myMain(args[0], args[1]);
                 } catch (Exception e) {
                          System.exit(2);
                 }

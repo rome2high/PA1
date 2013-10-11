@@ -91,6 +91,13 @@ public class Parent extends JFrame implements ActionListener {
 			}
 			fileHandler.read();
 			MatrixB = new MatrixInt(fileHandler.getLines());
+			
+//			File fi = new File("MatrixC.io");
+//			if(fi.exists()){
+//				fi.delete();
+//			}
+//			System.out.println(fi.exists());
+			
 		}
 		else if (arg0.getActionCommand().equals("Dump Matrix B")) { 
 			System.out.println("The Matrix B is:");
@@ -109,7 +116,7 @@ public class Parent extends JFrame implements ActionListener {
 				if(MatrixA.columns() == MatrixB.rows()){
 					Manager m = new Manager(MatrixA, MatrixB, MatrixC);
 					try {
-						m.vectorSize = MatrixA.columns() * MatrixB.rows() + MatrixB.rows();
+						//m.vectorSize = MatrixA.columns() * MatrixB.rows();
 						m.store();
 						m.execute();
 					} catch (IOException e) {
@@ -121,6 +128,8 @@ public class Parent extends JFrame implements ActionListener {
 					fileHandler.setFile(fi);
 					fileHandler.setLines(m.MatrixC.ToArrayList());
 					fileHandler.write();
+					
+					
 					return;
 				}
 			}

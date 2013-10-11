@@ -10,12 +10,15 @@
 //   program code with the inspiration from Michael Dorin's works in designing and debugging my program.
 //*********************************************************
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+
+import javax.xml.bind.DatatypeConverter;
 
 public class Manager {
 
@@ -43,29 +46,31 @@ public class Manager {
 
 		try {
 			
-			MatrixA_mmFile.setLength(0);
-			MatrixB_mmFile.setLength(0);
-			MatrixC_mmFile.setLength(0);
-			
-			io1.force();
-			io2.force();
-			io3.force();
-			MatrixA_mmFile.close();
-			MatrixB_mmFile.close();
-			MatrixC_mmFile.close();
-			
 		MatrixA_mmFile = new RandomAccessFile("MatrixA.io", "rw");
-		io1 = MatrixA_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, vectorSize*4);
+		io1 = MatrixA_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 100*8);
 		
 		MatrixB_mmFile = new RandomAccessFile("MatrixB.io", "rw");
-		io2 = MatrixB_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, vectorSize*4);
+		io2 = MatrixB_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 100*8);
 		
 		MatrixC_mmFile = new RandomAccessFile("MatrixC.io", "rw");
-		io3 = MatrixC_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, vectorSize*4);
+		io3 = MatrixC_mmFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 100*8);
 		}
 		catch (Exception e) {
 			System.out.println("error");
 		}
+		
+		byte[] clearbuffer = new byte[io1.remaining()];
+		io1.put(clearbuffer);
+		io1.force();
+		io1.clear();
+		clearbuffer = new byte[io2.remaining()];
+		io2.put(clearbuffer);
+		io2.force();
+		io2.clear();
+		clearbuffer = new byte[io3.remaining()];
+		io3.put(clearbuffer);
+		io3.force();
+		io3.clear();
 		
 		//write MatrixA RandomAccessFile
 		Vector[] vec = MatrixA.getM_matrix();
@@ -76,22 +81,44 @@ public class Manager {
 				io1.putInt(index , v.vector[j]);
 				index += 4;
 			}
-			io1.putInt(index, -99999);
+			io1.putInt(index, -9999);
 			index += 4;
 		}
 		
 		//write MatrixB RandomAccessFile
 		vec = MatrixB.getM_matrix();
 		index = 0;
+		String s ="";
+		
 		for(int i = 0; i< vec.length; i++){
 			Vector v = vec[i];
-			for(int j= 0; j < v.vector.length; j++){
-				io2.putInt(index , v.vector[j]);
-				index += 4;
-			}
-			io2.putInt(index, -99999);
-			index += 4;
+			s += v.line + "#";
 		}
+		
+			//s = s.substring(0, s.length() -1);
+			byte[] b = s.getBytes();
+			System.out.println(b);
+			
+			System.out.println(io2.remaining());
+			s = new String(b);
+			System.out.println(s);
+			
+//			byte[] b2 = new byte[io2.remaining()];
+//			io2.put(b2);
+//			io2.force();
+//			io2.clear();
+			
+			io2.put(b);
+			
+//			for(int j= 0; j < v.vector.length; j++){
+//				io2.putInt(index , v.vector[j]);
+//				System.out.println(index + " - " + v.vector[j]);
+//				index += 4;
+//			}
+			//io2.putChar('#');
+			//io2.putInt(index, -9999);
+			//index += 4;
+		//io2.putChar('#');
 		
 		io1.force();
 		io2.force();
@@ -101,10 +128,10 @@ public class Manager {
 		MatrixC_mmFile.close();
 	}
 
-	public void execute() {
+	public void execute() throws IOException {
 		try {
-			//String[] exec = {"java", "-cp", "bin\\", "Worker", Integer.toString(vectorSize)};	//using this for Eclipse Debugging
-			String[] exec = {"java", "-cp", ".", "Worker", Integer.toString(vectorSize)};  		//java Worker vector size =12
+			String[] exec = {"java", "-cp", "bin\\", "Worker", Integer.toString(vectorSize), Integer.toString(MatrixB.rows())};	//using this for Eclipse Debugging
+			//String[] exec = {"java", "-cp", ".", "Worker", Integer.toString(vectorSize)};  		//java Worker vector size =12
 			proc[0] = Runtime.getRuntime().exec(exec);
 			proc[0].waitFor();
 
@@ -124,18 +151,36 @@ public class Manager {
         String s = "";
         int index = 0;
         
-        //read MatrixC RandomAccessFile
-        for(int i = 0; i<vectorSize; i++){
-        	index = i*4;
-        	arrInt[i] = io3.getInt(index);
-        	s += arrInt[i] + " ";
-        	if(arrInt[i] == -99999){
-        		s = s.substring(0, s.indexOf("-99999"));
-        		s = s.trim();
-        		alist.add(s);
-        		s= "";
-        	}
-        }
+        try {
+        	 //read MatrixC RandomAccessFile
+            for(int i = 0; i<vectorSize; i++){
+            	index = i*4;
+            	arrInt[i] = io3.getInt(index);
+            	s += arrInt[i] + " ";
+            	if(arrInt[i] == -9999){
+            		s = s.substring(0, s.indexOf("-9999"));
+            		s = s.trim();
+            		alist.add(s);
+            		s= "";
+            	}
+            }
+            
+            //clear MatrixC.io file
+            MatrixC_mmFile = new RandomAccessFile("MatrixDummy.io", "rw");
+			MatrixC_mmFile.getChannel().close();//.map(FileChannel.MapMode.READ_WRITE, 0, vectorSize*4);
+//			io3.force();
+			MatrixC_mmFile.close();
+            File fi = new File("MatrixC.io");
+			if(fi.exists()){
+				fi.delete();
+			}
+			
+			System.out.println(fi.exists());
+		}finally{
+			
+			io3.force();
+			MatrixC_mmFile.close();
+		}
         
         if(alist.size() <= 0){
         	System.out.println("RandomAccessFile Fail! \n Can't retrive data for output matrix ");
@@ -145,6 +190,7 @@ public class Manager {
         MatrixC = new MatrixInt(alist);
         System.out.println("MatrixC result is:");
         System.out.println(MatrixC.toString());
+        
  	}
 	
 }
