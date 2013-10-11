@@ -129,7 +129,6 @@ public class Parent extends JFrame implements ActionListener {
 					fileHandler.setLines(m.MatrixC.ToArrayList());
 					fileHandler.write();
 					
-					
 					return;
 				}
 			}

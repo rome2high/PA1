@@ -150,8 +150,13 @@ public class MatrixInt implements Matrix{
 	
 	public ArrayList<String> ToArrayList(){
 		ArrayList<String> arrS = new ArrayList<String>();
-		for(Vector v : m_matrix){
-			arrS.add(v.line);
+		
+		for(int i = 0; i<rows(); i++){
+			String _s = "";
+			for(int j= 0; j<columns(); j++){
+				_s += get(i,j) + " ";
+			}
+			arrS.add(_s.trim());
 		}
 		return arrS;
 	}
